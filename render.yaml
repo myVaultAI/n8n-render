@@ -5,8 +5,8 @@ services:
     plan: free
     autoDeploy: true
     dockerfilePath: ./Dockerfile
+    dockerContext: .
     healthCheckPath: /healthz
-    startCommand: n8n start
     envVars:
       # n8n Core Configuration
       - key: N8N_PORT
