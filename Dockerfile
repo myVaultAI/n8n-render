@@ -7,6 +7,7 @@ EXPOSE 5678
 ENV N8N_PORT=5678
 ENV N8N_PROTOCOL=https
 
-# The n8nio/n8n image has n8n installed at /usr/local/bin/n8n
-# Use the full path to ensure it's found
-CMD ["/usr/local/bin/n8n", "start"]
+# The n8nio/n8n base image already has 'n8n' as the ENTRYPOINT
+# So we just need to pass 'start' as the command
+# The base image will execute: n8n start
+CMD ["start"]
