@@ -1,0 +1,15 @@
+# Git files
+.git
+.gitignore
+
+# Documentation
+*.md
+README.md
+ENV_VARS_SETUP.md
+
+# macOS
+.DS_Store
+
+# n8n workflow (keep this - it's needed)
+# Addi-Conversations.json
+

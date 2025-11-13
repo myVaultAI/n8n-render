@@ -1,7 +1,7 @@
 services:
   - type: web
     name: n8n-addi-server
-    env: docker
+    runtime: docker
     plan: free
     autoDeploy: true
     dockerfilePath: ./Dockerfile
