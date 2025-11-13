@@ -1,0 +1,607 @@
+{
+  "name": "Addi-Conversations",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "70c648a8-ec60-4f68-8d0f-8152c9cdc65f",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "67828c36-e2c2-4938-b2b6-9c111fc9938f",
+      "name": "Webhook",
+      "webhookId": "70c648a8-ec60-4f68-8d0f-8152c9cdc65f"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://addi-stetson-backend.onrender.com/api/webhooks/interaction/log",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "0f57aa20-7ff7-4a0a-83a4-8c204ce08135",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get incoming payload (first item)\nconst input = items[0].json || {};\n\n// Safely reach into the nested structure\nconst transcriptArray = input.body?.data?.transcript || [];\n\n// Build array of formatted lines and a single text blob\nconst transcriptLines = transcriptArray.map(entry => {\n  const role = entry.role === 'agent' ? 'Agent' : 'User';\n  const message = (entry.message ?? '').toString().trim();\n  return `${role}: ${message}`;\n});\n\n// Join into a plain text transcript\nconst transcriptText = transcriptLines.join('\\n');\n\n// Extra metadata\nconst conversationId = input.body?.data?.conversation_id || input.body?.data?.conversationId || null;\nconst timestamp = input.body?.event_timestamp ? new Date(input.body.event_timestamp * 1000).toISOString() : (input.body?.data?.metadata?.system__time_utc || new Date().toISOString());\n\n// Return a proper JSON object (NOT a JSON-string)\nreturn [\n  {\n    json: {\n      conversation_id: conversationId,\n      timestamp: timestamp,\n      transcript_lines: transcriptLines,      // array of individual lines (safe json)\n      transcript_text: transcriptText,        // plain text blob (string)\n      original_payload: input                  // optional: include the full incoming payload (remove if too large)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "944e30d8-64bb-4c13-a1e2-06227f1b59c3",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        0
+      ],
+      "id": "ad35bf7c-28dc-4b29-81f1-65db5b1f8f05",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "rI47iA6B1DFAAINT",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "myvaultai.app.n8n.cloud",
+            "user-agent": "ElevenLabs/1.0",
+            "content-length": "9919",
+            "accept": "*/*",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "34.59.11.47",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "99b88ac5141deae0-ORD",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "elevenlabs-signature": "t=1762641311,v0=87ec9772e963f3b57ecdf31ea658e1cb10fb19d1035723aa4b8f68e50adb3178",
+            "x-forwarded-for": "34.59.11.47, 172.70.126.119",
+            "x-forwarded-host": "myvaultai.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-84-57fcbd49bc-mxt98",
+            "x-is-trusted": "yes",
+            "x-real-ip": "34.59.11.47"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "type": "post_call_transcription",
+            "event_timestamp": 1762641311,
+            "data": {
+              "agent_id": "agent_0301k84pwdr2ffprwkqaha0f178g",
+              "conversation_id": "conv_7701k9jsq3vjemtvwcewarm2q67h",
+              "status": "done",
+              "user_id": null,
+              "branch_id": null,
+              "transcript": [
+                {
+                  "role": "agent",
+                  "agent_metadata": {
+                    "agent_id": "agent_0301k84pwdr2ffprwkqaha0f178g",
+                    "branch_id": null,
+                    "workflow_node_id": null
+                  },
+                  "message": "Hello! How can I help you today?",
+                  "multivoice_message": null,
+                  "tool_calls": [],
+                  "tool_results": [],
+                  "feedback": null,
+                  "llm_override": null,
+                  "time_in_call_secs": 0,
+                  "conversation_turn_metrics": {
+                    "metrics": {
+                      "convai_tts_service_ttfb": {
+                        "elapsed_time": 0.21789587000239408
+                      }
+                    }
+                  },
+                  "rag_retrieval_info": null,
+                  "llm_usage": null,
+                  "interrupted": false,
+                  "original_message": null,
+                  "source_medium": null
+                },
+                {
+                  "role": "user",
+                  "agent_metadata": null,
+                  "message": "Yes, do you offer any marine biology degrees?",
+                  "multivoice_message": null,
+                  "tool_calls": [],
+                  "tool_results": [],
+                  "feedback": null,
+                  "llm_override": null,
+                  "time_in_call_secs": 3,
+                  "conversation_turn_metrics": {
+                    "metrics": {
+                      "convai_asr_trailing_service_latency": {
+                        "elapsed_time": 0.11236550100147724
+                      }
+                    }
+                  },
+                  "rag_retrieval_info": null,
+                  "llm_usage": null,
+                  "interrupted": false,
+                  "original_message": null,
+                  "source_medium": "audio"
+                },
+                {
+                  "role": "agent",
+                  "agent_metadata": {
+                    "agent_id": "agent_0301k84pwdr2ffprwkqaha0f178g",
+                    "branch_id": null,
+                    "workflow_node_id": null
+                  },
+                  "message": "\nYes, we offer a Marine Biology degree program at Stetson University. Our Marine Biology program provides unique opportunities with direct access to the Atlantic Ocean, state-of-the-art laboratories, and...",
+                  "multivoice_message": null,
+                  "tool_calls": [],
+                  "tool_results": [],
+                  "feedback": null,
+                  "llm_override": null,
+                  "time_in_call_secs": 8,
+                  "conversation_turn_metrics": {
+                    "metrics": {
+                      "convai_llm_service_ttf_sentence": {
+                        "elapsed_time": 1.1203456380026182
+                      },
+                      "convai_llm_service_ttfb": {
+                        "elapsed_time": 0.9830876690029982
+                      },
+                      "convai_llm_service_tt_last_sentence": {
+                        "elapsed_time": 1.7124198410019744
+                      },
+                      "convai_tts_service_ttfb": {
+                        "elapsed_time": 0.2639798640011577
+                      }
+                    }
+                  },
+                  "rag_retrieval_info": null,
+                  "llm_usage": {
+                    "model_usage": {
+                      "glm-45-air-fp8": {
+                        "input": {
+                          "tokens": 17462,
+                          "price": 0.01536656
+                        },
+                        "input_cache_read": {
+                          "tokens": 0,
+                          "price": 0
+                        },
+                        "input_cache_write": {
+                          "tokens": 0,
+                          "price": 0
+                        },
+                        "output_total": {
+                          "tokens": 77,
+                          "price": 0.001001
+                        }
+                      }
+                    }
+                  },
+                  "interrupted": true,
+                  "original_message": "\nYes, we offer a Marine Biology degree program at Stetson University. Our Marine Biology program provides unique opportunities with direct access to the Atlantic Ocean, state-of-the-art laboratories, and undergraduate research experiences. Students can earn a Bachelor of Science in Marine Biology with hands-on field studies and research vessel access. Would you like more information about this program or our other science offerings?",
+                  "source_medium": null
+                },
+                {
+                  "role": "user",
+                  "agent_metadata": null,
+                  "message": "Awesome. That's all I needed. Thank you so much.",
+                  "multivoice_message": null,
+                  "tool_calls": [],
+                  "tool_results": [],
+                  "feedback": null,
+                  "llm_override": null,
+                  "time_in_call_secs": 18,
+                  "conversation_turn_metrics": {
+                    "metrics": {
+                      "convai_asr_trailing_service_latency": {
+                        "elapsed_time": 0.19494553100230405
+                      }
+                    }
+                  },
+                  "rag_retrieval_info": null,
+                  "llm_usage": null,
+                  "interrupted": false,
+                  "original_message": null,
+                  "source_medium": "audio"
+                },
+                {
+                  "role": "agent",
+                  "agent_metadata": {
+                    "agent_id": "agent_0301k84pwdr2ffprwkqaha0f178g",
+                    "branch_id": null,
+                    "workflow_node_id": null
+                  },
+                  "message": "\nYou're very welcome!...",
+                  "multivoice_message": null,
+                  "tool_calls": [],
+                  "tool_results": [],
+                  "feedback": null,
+                  "llm_override": null,
+                  "time_in_call_secs": 21,
+                  "conversation_turn_metrics": {
+                    "metrics": {
+                      "convai_llm_service_ttf_sentence": {
+                        "elapsed_time": 0.17806338800437516
+                      },
+                      "convai_llm_service_ttfb": {
+                        "elapsed_time": 0.14135856000211788
+                      },
+                      "convai_llm_service_tt_last_sentence": {
+                        "elapsed_time": 0.4893817950069206
+                      },
+                      "convai_tts_service_ttfb": {
+                        "elapsed_time": 0.1919063239984098
+                      }
+                    }
+                  },
+                  "rag_retrieval_info": null,
+                  "llm_usage": {
+                    "model_usage": {
+                      "glm-45-air-fp8": {
+                        "input": {
+                          "tokens": 17521,
+                          "price": 0.01541848
+                        },
+                        "input_cache_read": {
+                          "tokens": 0,
+                          "price": 0
+                        },
+                        "input_cache_write": {
+                          "tokens": 0,
+                          "price": 0
+                        },
+                        "output_total": {
+                          "tokens": 40,
+                          "price": 0.00052
+                        }
+                      }
+                    }
+                  },
+                  "interrupted": true,
+                  "original_message": "\nYou're very welcome! I'm glad I could help with information about our Marine Biology program. If you need any other assistance with Stetson University, feel free to reach out anytime.",
+                  "source_medium": null
+                }
+              ],
+              "metadata": {
+                "start_time_unix_secs": 1762641285,
+                "accepted_time_unix_secs": 1762641285,
+                "call_duration_secs": 23,
+                "cost": 522,
+                "deletion_settings": {
+                  "deletion_time_unix_secs": null,
+                  "deleted_logs_at_time_unix_secs": null,
+                  "deleted_audio_at_time_unix_secs": null,
+                  "deleted_transcript_at_time_unix_secs": null,
+                  "delete_transcript_and_pii": false,
+                  "delete_audio": false
+                },
+                "feedback": {
+                  "type": null,
+                  "overall_score": null,
+                  "likes": 0,
+                  "dislikes": 0,
+                  "rating": null,
+                  "comment": null
+                },
+                "authorization_method": "signed_url",
+                "charging": {
+                  "dev_discount": false,
+                  "is_burst": false,
+                  "tier": "starter",
+                  "llm_usage": {
+                    "irreversible_generation": {
+                      "model_usage": {
+                        "glm-45-air-fp8": {
+                          "input": {
+                            "tokens": 34983,
+                            "price": 0.03078504
+                          },
+                          "input_cache_read": {
+                            "tokens": 0,
+                            "price": 0
+                          },
+                          "input_cache_write": {
+                            "tokens": 0,
+                            "price": 0
+                          },
+                          "output_total": {
+                            "tokens": 117,
+                            "price": 0.0015209999999999998
+                          }
+                        }
+                      }
+                    },
+                    "initiated_generation": {
+                      "model_usage": {
+                        "glm-45-air-fp8": {
+                          "input": {
+                            "tokens": 52903,
+                            "price": 0.04655464
+                          },
+                          "input_cache_read": {
+                            "tokens": 0,
+                            "price": 0
+                          },
+                          "input_cache_write": {
+                            "tokens": 0,
+                            "price": 0
+                          },
+                          "output_total": {
+                            "tokens": 119,
+                            "price": 0.0015469999999999998
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "llm_price": 0.04810164,
+                  "llm_charge": 288,
+                  "call_charge": 234,
+                  "free_minutes_consumed": 0,
+                  "free_llm_dollars_consumed": 0
+                },
+                "phone_call": {
+                  "direction": "inbound",
+                  "phone_number_id": "phnum_7301k9bdky50ezstxhw2sv1dp8nd",
+                  "agent_number": "+18882965621",
+                  "external_number": "+14072522589",
+                  "type": "twilio",
+                  "stream_sid": "MZ367c3bcf9420c048130e730c5b3d6a68",
+                  "call_sid": "CA9fcafa6cc22c92302429332b3cca04a8"
+                },
+                "batch_call": null,
+                "termination_reason": "Call ended by remote party",
+                "error": null,
+                "main_language": "en",
+                "rag_usage": null,
+                "text_only": false,
+                "features_usage": {
+                  "language_detection": {
+                    "enabled": false,
+                    "used": false
+                  },
+                  "transfer_to_agent": {
+                    "enabled": false,
+                    "used": false
+                  },
+                  "transfer_to_number": {
+                    "enabled": false,
+                    "used": false
+                  },
+                  "multivoice": {
+                    "enabled": false,
+                    "used": false
+                  },
+                  "dtmf_tones": {
+                    "enabled": false,
+                    "used": false
+                  },
+                  "external_mcp_servers": {
+                    "enabled": false,
+                    "used": false
+                  },
+                  "pii_zrm_workspace": false,
+                  "pii_zrm_agent": false,
+                  "tool_dynamic_variable_updates": {
+                    "enabled": false,
+                    "used": false
+                  },
+                  "is_livekit": false,
+                  "voicemail_detection": {
+                    "enabled": false,
+                    "used": false
+                  },
+                  "workflow": {
+                    "enabled": false,
+                    "tool_node": {
+                      "enabled": false,
+                      "used": false
+                    },
+                    "standalone_agent_node": {
+                      "enabled": false,
+                      "used": false
+                    },
+                    "phone_number_node": {
+                      "enabled": false,
+                      "used": false
+                    },
+                    "end_node": {
+                      "enabled": false,
+                      "used": false
+                    }
+                  },
+                  "agent_testing": {
+                    "enabled": false,
+                    "tests_ran_after_last_modification": false,
+                    "tests_ran_in_last_7_days": false
+                  }
+                },
+                "eleven_assistant": {
+                  "is_eleven_assistant": false
+                },
+                "initiator_id": null,
+                "conversation_initiation_source": "twilio",
+                "conversation_initiation_source_version": null,
+                "timezone": "America/New_York",
+                "initiation_trigger": {
+                  "trigger_type": "default"
+                },
+                "async_metadata": null,
+                "whatsapp": null,
+                "agent_created_from": "ui",
+                "agent_last_updated_from": "ui"
+              },
+              "analysis": {
+                "evaluation_criteria_results": {},
+                "data_collection_results": {
+                  "student_name": {
+                    "data_collection_id": "student_name",
+                    "value": null,
+                    "json_schema": {
+                      "type": "string",
+                      "description": "Student's full name",
+                      "enum": null,
+                      "is_system_provided": false,
+                      "dynamic_variable": "",
+                      "constant_value": ""
+                    },
+                    "rationale": "The conversation does not contain the student's full name. Therefore, it is not possible to extract the data."
+                  },
+                  "inquiry_topic": {
+                    "data_collection_id": "inquiry_topic",
+                    "value": "do you offer any marine biology degrees?",
+                    "json_schema": {
+                      "type": "string",
+                      "description": "Brief description of what they need help with",
+                      "enum": null,
+                      "is_system_provided": false,
+                      "dynamic_variable": "",
+                      "constant_value": ""
+                    },
+                    "rationale": "The user is asking if the agent offers any marine biology degrees. This is a brief description of what they need help with."
+                  },
+                  "best_time_to_call": {
+                    "data_collection_id": "best_time_to_call",
+                    "value": null,
+                    "json_schema": {
+                      "type": "string",
+                      "description": "When to contact them (morning/afternoon)",
+                      "enum": null,
+                      "is_system_provided": false,
+                      "dynamic_variable": "",
+                      "constant_value": ""
+                    },
+                    "rationale": "I cannot extract the requested information from the provided conversation. The conversation does not contain any information about when to contact the user."
+                  }
+                },
+                "call_successful": "success",
+                "transcript_summary": "The user inquired about marine biology degrees. The agent confirmed that Stetson University offers such a program, highlighting its access to the Atlantic Ocean and state-of-the-art laboratories. The user was satisfied with the information provided.\n",
+                "call_summary_title": "Marine Biology Degree Info"
+              },
+              "conversation_initiation_client_data": {
+                "conversation_config_override": {
+                  "turn": null,
+                  "tts": null,
+                  "conversation": null,
+                  "agent": null
+                },
+                "custom_llm_extra_body": {},
+                "user_id": null,
+                "source_info": {
+                  "source": null,
+                  "version": null
+                },
+                "dynamic_variables": {
+                  "system__agent_id": "agent_0301k84pwdr2ffprwkqaha0f178g",
+                  "system__current_agent_id": "agent_0301k84pwdr2ffprwkqaha0f178g",
+                  "system__conversation_id": "conv_7701k9jsq3vjemtvwcewarm2q67h",
+                  "system__caller_id": "+14072522589",
+                  "system__called_number": "+18882965621",
+                  "system__call_duration_secs": 23,
+                  "system__time_utc": "2025-11-08T22:35:08.610396+00:00",
+                  "system__time": "Saturday, 17:35 08 November 2025",
+                  "system__timezone": "America/New_York",
+                  "system__call_sid": "CA9fcafa6cc22c92302429332b3cca04a8"
+                }
+              }
+            }
+          },
+          "webhookUrl": "https://myvaultai.app.n8n.cloud/webhook-test/70c648a8-ec60-4f68-8d0f-8152c9cdc65f",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1633f7d6-9dbe-4416-8203-e72f2df598a7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ce39d5f01c9705fab5a30b48e937c5316b1b902bb80a3f1f504b48df98ee2463"
+  },
+  "id": "mupqviG8KTDNIb7q",
+  "tags": []
+}

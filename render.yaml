@@ -1,0 +1,64 @@
+services:
+  - type: web
+    name: n8n-addi-server
+    env: docker
+    plan: free
+    autoDeploy: true
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /healthz
+    envVars:
+      # n8n Core Configuration
+      - key: N8N_PORT
+        value: 5678
+      - key: N8N_PROTOCOL
+        value: https
+      - key: WEBHOOK_URL
+        sync: false
+        # Will be set automatically by Render, but you can override if needed
+        # Format: https://n8n-addi-server-[random].onrender.com
+      
+      # Basic Auth (Change these values!)
+      - key: N8N_BASIC_AUTH_ACTIVE
+        value: "true"
+      - key: N8N_BASIC_AUTH_USER
+        value: admin
+        
+      - key: N8N_BASIC_AUTH_PASSWORD
+        sync: false
+        # TODO: Set this in Render dashboard after deployment
+        # Value should be set in Render's Environment Variables section
+      
+      # Data Persistence (Optional but Recommended)
+      - key: N8N_USER_FOLDER
+        value: /home/node/.n8n
+      
+      # Security
+      - key: N8N_SECURE_COOKIE
+        value: "true"
+      
+      # Timezone
+      - key: GENERIC_TIMEZONE
+        value: America/New_York
+      
+      # Dashboard Backend URL (for forwarding webhooks)
+      - key: DASHBOARD_BACKEND_URL
+        value: https://addi-stetson-backend.onrender.com
+      
+      # ElevenLabs Webhook Secret (for HMAC verification)
+      - key: ELEVENLABS_WEBHOOK_SECRET
+        sync: false
+        # TODO: Set this in Render dashboard after deployment
+        # Get from ElevenLabs webhook configuration
+      
+      # Google Sheets (will be configured via n8n UI after deployment)
+      # Note: OAuth credentials are stored in n8n's encrypted credential store
+      
+      # Twilio (for SMS integration - optional)
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+        # TODO: Set this in Render dashboard after deployment
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+        # TODO: Set this in Render dashboard after deployment
+      - key: TWILIO_PHONE_NUMBER
+        value: +18882965621
