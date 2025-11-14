@@ -14,9 +14,8 @@ services:
       - key: N8N_PROTOCOL
         value: https
       - key: WEBHOOK_URL
-        sync: false
-        # Will be set automatically by Render, but you can override if needed
-        # Format: https://n8n-addi-server-[random].onrender.com
+        value: https://n8n-renders-cedj.onrender.com
+        # Set to your actual Render service URL
       
       # Basic Auth (Change these values!)
       - key: N8N_BASIC_AUTH_ACTIVE
